@@ -1,56 +1,12 @@
-import React, {Component} from 'react';
-import {StyleSheet, Text, View, Image, FlatList, ImageBackground} from 'react-native';
+import React from 'react';
+import {StyleSheet, Text, View, FlatList, ImageBackground} from 'react-native';
 import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
-import Card from '../Card'
-import {data} from '../data'
-
-const _keyExtractor = (item, index) => item.id;
-
-const FirstRoute = () => (
-  <View style={[styles.container]}>
-    <ImageBackground
-      source={require('../../../assets/background.png')}
-      style={styles.backgroundImage}
-      >
-      <View style={{
-        paddingHorizontal: '3%'
-      }}>
-        <Text styles={{marginTop: '5%'}}/>
-        <FlatList
-          contentContainerStyle={{paddingBottom: 20}}
-          data={data}
-          renderItem={({item}) => <Card data={item} />}
-          keyExtractor={_keyExtractor}
-        />
-      </View>
-    </ImageBackground>
-  </View>
-);
-const SecondRoute = () => (
-  <View style={[styles.container, { alignItems: 'center', justifyContent: 'center' }]}>
-    <Text style={{color: 'white'}}>Coming Soon</Text>
-  </View>
-);
+import UpcomingEvents from './upcoming-events';
+import PastEvents from './past-events';
+import LiveEvents from './live-events';
 
 export default class MatchesTabs extends React.Component {
-
-  _renderTabBar = props => {
-    return (
-      <TabBar
-        {...props}
-        indicatorStyle={{ backgroundColor: '#FFF' }}
-        style={{
-          backgroundColor: '#130F0D',
-          borderBottomWidth: 0.5,
-          borderColor: '#FFF'
-        }}
-        labelStyle={{
-          color: "#FFF"
-        }}
-      />
-    );
-  };
-
+  
   state = {
     index: 0,
     routes: [
@@ -60,16 +16,31 @@ export default class MatchesTabs extends React.Component {
     ],
   };
 
+  _renderTabBar = props => {
+    return (
+      <TabBar
+        {...props}
+        indicatorStyle={styles.indicatorStyle}
+        style={styles.tabBarStyle}
+        labelStyle={styles.labelStyle}
+      />
+    );
+  };
+
+  _renderScene = () => (
+    SceneMap({
+      upcoming: UpcomingEvents,
+      past: PastEvents,
+      live: LiveEvents
+    })
+  )
+
   render() {
     return (
       <TabView
         navigationState={this.state}
         renderTabBar={this._renderTabBar}
-        renderScene={SceneMap({
-          upcoming: FirstRoute,
-          past: SecondRoute,
-          live: SecondRoute
-        })}
+        renderScene={this._renderScene()}
         onIndexChange={index => this.setState({ index })}
       />
     );
@@ -77,12 +48,15 @@ export default class MatchesTabs extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#130F0D',
+  indicatorStyle: { 
+    backgroundColor: '#FFF' 
   },
-  backgroundImage: {
-    flex: 1,
-    resizeMode: 'cover',
-  }
+  tabBarStyle: {
+    backgroundColor: '#130F0D',
+    borderBottomWidth: 0.5,
+    borderColor: '#FFF'
+  },
+  labelStyle: {
+    color: "#FFF"
+  },
 });
